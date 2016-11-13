@@ -1,0 +1,8 @@
+influx_host = "localhost"
+influx_db = "maqn"
+influx_user = "maqn"
+influx_pass = "changeme"
+
+db = "mysql://maqn:changeme@localhost:3306/maqn"
+
+flask_secret_key = 'changemechangemechangeme'
