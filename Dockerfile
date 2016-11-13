@@ -1,7 +1,7 @@
 FROM python:2.7-onbuild
 
-RUN mkdir /data && \
-  rm /usr/src/app/config.py && \
+RUN rm /usr/src/app/config.py ; \
+  mkdir /data && \
   ln -s /data/config.py /usr/src/app/config.py
 
 VOLUME /data

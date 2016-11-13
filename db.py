@@ -25,3 +25,9 @@ class Sensor(BaseModel):
 
 
 db.create_tables([User, Sensor], True)
+
+def db_connect():
+	db.connect()
+
+def db_close():
+	db.close()

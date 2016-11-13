@@ -4,7 +4,7 @@ from flask_cors import cross_origin
 from influxdb import InfluxDBClient
 from datetime import datetime
 
-from db import Sensor
+from db import Sensor, db_connect, db_close
 import config
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ influx = InfluxDBClient(config.influx_host, 8086, config.influx_user, config.inf
 
 @app.route('/submit.php', methods=['POST'])
 def incomingSensorData():
-	data = request.get_json()
+	data = request.get_json(force=True)
 
 	datapoint = [{
 		"measurement": "sensor_values_002",
@@ -40,6 +40,7 @@ def incomingSensorData():
 @cache.cached(timeout=119)
 @cross_origin()
 def getNodeList():
+	db_connect()
 	query = 'show tag values from "sensor_values_002" with key = "MAC";'
 	rs = influx.query(query)
 
@@ -93,12 +94,12 @@ def getNodeList():
 				}
 			}
 
-		nodedata[node]["nodeinfo"]["owner"] = dbdata.owner.email
+		nodedata[node]["nodeinfo"]["owner"] = { "email": dbdata.owner.email }
 		nodedata[node]["nodeinfo"]["location"] = {
 			"latitude": float(dbdata.latitude),
 			"longitude": float(dbdata.longitude)
 		}
 
 	data = { "version":1, "nodes": nodedata, "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")}
-
+	db_close()
 	return jsonify(data)
