@@ -36,6 +36,34 @@ def incomingSensorData():
 	influx.write_points(datapoint, time_precision = "s")
 	return "success"
 
+@app.route('/v1/submit', methods=['POST'])
+def incomingSensorDataStuttgart():
+	data = request.get_json(force=True)
+	
+	sensor_id = request.headers.get('X-Sensor')
+
+	datapoint = [{
+		"measurement": "sensor_values_002",
+		"tags": {
+			"MAC": sensor_id,
+			"firmware": data['software_version']
+		},
+		"fields": {}
+	}]
+	
+	for measurement in data['sensordatavalues']:
+		if measurement['value_type'] == "SDS_P1":
+			datapoint[0]['fields']['pm10'] = float(measurement['value'])
+		elif measurement['value_type'] == "SDS_P2":
+			datapoint[0]['fields']['pm25'] = float(measurement['value'])
+		elif measurement['value_type'] == "temperature":
+			datapoint[0]['fields']['temperature'] = float(measurement['value'])
+		elif measurement['value_type'] == "humidity":
+			datapoint[0]['fields']['humidity'] = float(measurement['value'])
+
+	influx.write_points(datapoint, time_precision = "s")
+	return "success"
+
 @app.route('/nodes.json')
 @cache.cached(timeout=119)
 @cross_origin()
