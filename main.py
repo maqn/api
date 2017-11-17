@@ -103,11 +103,11 @@ def getNodeList():
 			"statistics": {
 				"pm10": result['pm10'],
 				"pm25": result['pm25'],
-				"pm10_avg": result['pm10_avg']/9,
-				"pm25_avg": result['pm25_avg']/9,
+				"pm10_avg": (result['pm10_avg'] or 0) / 9,
+				"pm25_avg": (result['pm25_avg'] or 0) / 9,
 				"temperature": result['temperature'],
 				"humidity": result['humidity'],
-				"uptime": result['uptime'] / 1000
+				"uptime": (result['uptime'] or 0) / 1000
 				},
 			"nodeinfo": {
 				"node_id": node,
