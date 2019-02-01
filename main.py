@@ -56,10 +56,12 @@ def incomingSensorDataStuttgart():
 			datapoint[0]['fields']['pm10'] = float(measurement['value'])
 		elif measurement['value_type'] == "SDS_P2":
 			datapoint[0]['fields']['pm25'] = float(measurement['value'])
-		elif measurement['value_type'] == "temperature":
+		elif measurement['value_type'] == "temperature" or measurement['value_type'] == "BME280_temperature":
 			datapoint[0]['fields']['temperature'] = float(measurement['value'])
-		elif measurement['value_type'] == "humidity":
+		elif measurement['value_type'] == "humidity" or measurement['value_type'] == "BME280_humidity":
 			datapoint[0]['fields']['humidity'] = float(measurement['value'])
+                elif measurement['value_type'] == "BME280_pressure":
+			datapoint[0]['fields']['pressure'] = float(measurement['value'])
 
 	influx.write_points(datapoint, time_precision = "s")
 	return "success"
@@ -107,6 +109,7 @@ def getNodeList():
 				"pm25_avg": (result['pm25_avg'] or 0) / 9,
 				"temperature": result['temperature'],
 				"humidity": result['humidity'],
+                                "pressure": (result['pressure'] or 0),
 				"uptime": (result['uptime'] or 0) / 1000
 				},
 			"nodeinfo": {
